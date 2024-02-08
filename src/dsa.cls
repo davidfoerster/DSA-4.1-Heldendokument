@@ -87,23 +87,17 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newfontfamily{\mansontt}[
-  Path=fonts/,
-  Extension = .ttf,
   UprightFont = Mason-Bold
 ]{Manson}
 \DeclareTextFontCommand{\textmansontt}{\mansontt}
 \setmainfont{NewG8}[
-  Path           = fonts/,
-  Extension      = .otf,
   UprightFont    = NewG8-Reg,
   BoldFont       = NewG8-Bol,
   BoldItalicFont = NewG8-BolIta,
   ItalicFont     = NewG8-Ita
 ]
 \setmonofont{Copse}[
-  Path           = fonts/,
-  Extension      = .ttf,
-  UprightFont    = Copse-Regular
+  UprightFont    = Copse
 ]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
