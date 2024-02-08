@@ -1,0 +1,81 @@
+#!/bin/bash
+set -eu
+
+sub_help(){
+	echo "Benutzung: dsa41held <unterkommando> [options] <datei>\n"
+	echo "Unterkommandos:\n"
+	echo "    pdf            baue ein PDF mit Namen <datei ohne .lua>.pdf"
+	echo "        -w         weißer Hintergrund statt der Karte"
+	echo "        <datei>    Lua-Datei, die die Heldendaten enthält\n"
+	echo "    ereignisse     zeige Tabelle aller Steigerungsereignisse"
+	echo "        <datei>    Lua-Datei, die die Heldendaten enthält\n"
+	echo "    import         importiere einen Held aus der Heldensoftware."
+	echo "                   gibt Lua-Daten auf der Standardausgabe aus."
+	echo "        <datei>    XML-Datei, die einen aus der Heldensoftware exportierten"
+	echo "                   Helden enthält.\n"
+	echo "    validate       Validiere eine gegebene Lua-Datei gegen das Schema."
+	echo "        <datei>    Lua-Datei, die die Heldendaten enthält.\n"
+}
+
+sub_pdf(){
+	local BASE_NAME SOURCE_DATE_EPOCH src srcdir jobname
+	case "${1-}" in
+		-w|--white)
+			BASE_NAME=heldendokument-weiss; shift;;
+		*)
+			BASE_NAME=heldendokument;;
+	esac
+	[ "${1-}" != -- ] || shift
+	src="${1-}"
+	if [ -z "$src" ]; then
+		echo 'Pfad zur Heldendatei muss als Eingabe angegeben werden!' >&2
+		return 64
+	fi
+	jobname="${src##*/}"
+	jobname="${jobname%.lua}"
+	SOURCE_DATE_EPOCH="$(date -r "$src" '+%s')"
+	[[ "$src" == /* ]] || src="$PWD/$src"
+	srcdir="${src%/*}"
+	cd -- "$SOURCES/src"
+	SOURCE_DATE_EPOCH="$SOURCE_DATE_EPOCH" exec latexmk \
+		-lualatex="lualatex %O %S '${src//\'/\'\\\'\'}'" -jobname="$jobname" \
+		-output-directory="$srcdir" -aux-directory="$srcdir/build" \
+		-interaction=batchmode -halt-on-error \
+		"$BASE_NAME.tex"
+}
+
+sub_ereignisse(){
+	local ABS_INPUT="$1"
+	[[ "$ABS_INPUT" == /* ]] || ABS_INPUT="$PWD/$ABS_INPUT"
+	cd -- "$SOURCES/src"
+	exec texlua tools.lua list "$ABS_INPUT"
+}
+
+sub_import(){
+	exec xsltproc "$SOURCES/share/import.xsl" "$1"
+}
+
+sub_validate(){
+	local ABS_INPUT="$1"
+	[[ "$ABS_INPUT" == /* ]] || ABS_INPUT="$PWD/$ABS_INPUT"
+	cd -- "$SOURCES/src"
+	exec texlua tools.lua validate "$ABS_INPUT"
+}
+
+case "${1-}" in
+	-h|--help|help)
+		sub_help
+		;;
+	pdf|ereignisse|import|validate)
+		SOURCES="$(readlink -f -- "$0")"
+		SOURCES="${SOURCES%/*}"
+		SOURCES="${SOURCES%/bin}"
+		cmd="sub_$1"
+		shift
+		"$cmd" "$@"
+		;;
+	*)
+		printf 'Fehler: Unbekanntes Unterkommando `%s\x27.\nListe von Unterkommandos verfügbar via `%s --help\x27\n' "${1-}" "$0" >&2
+		exit 64
+		;;
+esac
