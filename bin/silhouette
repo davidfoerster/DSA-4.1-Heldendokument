@@ -1,0 +1,15 @@
+#!/bin/bash
+set -eu
+out_dir="$PWD"
+SOURCES="$(readlink -f -- "$0")"
+SOURCES="${SOURCES%/*}"
+SOURCES="${SOURCES%/bin}"
+cd -- "$SOURCES/src"
+
+SOURCE_DATE_EPOCH="$(date -r silhouette.tex '+%s')"
+export SOURCE_DATE_EPOCH
+exec latexmk \
+	-output-directory="$out_dir" -aux-directory="$out_dir/build" \
+	-usepretex="\\def\\SilKind{$1}\\def\\SilVariant{$2}" \
+	-interaction=batchmode -halt-on-error \
+	silhouette.tex
