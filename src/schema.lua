@@ -120,6 +120,18 @@ function schema.Layout.example(printer)
 }]])
 end
 
+local Portrait = d.Record:def(
+  {name = "Portrait", description = "Porträtbild des Helden"},
+  {"filename", String},
+  {"bb", String, ""},
+  {"viewport", String, ""},
+  {"trim", String, ""},
+  {"clip", schema.Boolean, true},
+  {"keepaspectratio", schema.Boolean, true},
+  {"type", String, ""},
+  {"ext", String, ""},
+  {"page", OptNum, {}})
+
 d:singleton(d.Record, {name = "Held", description = [[Grundlegende Daten des Helden.]]},
   {"Name", String, ""},
   {"GP", OptNum, {}},
@@ -135,7 +147,8 @@ d:singleton(d.Record, {name = "Held", description = [[Grundlegende Daten des Hel
   {"Stand", String, ""},
   {"Sozialstatus", OptNum, {}},
   {"Titel", Multiline, ""},
-  {"Aussehen", Multiline, ""})
+  {"Aussehen", Multiline, ""},
+  {"Portrait", Portrait, {filename=""}})
 function schema.Held.example(printer)
   printer:highlight([[Held {
   Name         = "Fette Alrike",
