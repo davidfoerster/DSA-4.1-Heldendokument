@@ -1,15 +1,18 @@
-local i = 1
-while i <= #arg do
-  local name = arg[i]
-  i = i + 1
-
-  if name == "heldendokument.tex" or name == "heldendokument-weiss.tex" then
-	break
+local ext = ".tex"
+local n = #arg
+for i, name in ipairs(arg) do
+  if string.sub(name, -#ext, -1):lower() == ext then
+    n = i + 1
+    break
   end
 end
 
-if i < #arg then
-  tex.error("zu viele Argumente. Erstes überflüssiges Argument: '" .. tostring(arg[i+1]) .. "'")
+if n < #arg then
+  tex.error("zu viele Argumente: '" .. table.concat(arg, "' '", n + 1) .. "'")
 end
 
-return assert(loadfile("values.lua", "t"))(arg[i])
+local filename = arg[n]
+local values = assert(loadfile("values.lua", "t")(filename))
+values.filename = filename
+
+return values
