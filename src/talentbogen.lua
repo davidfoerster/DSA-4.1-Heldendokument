@@ -74,7 +74,7 @@ end
 
 function talent.be(value)
   if value == "-" or value == "" then
-    return "–"
+    return "—"
   else
     --  must use local, dumps second return value
     local s = string.gsub(string.gsub(value, "x", "×"), "-", "−")
