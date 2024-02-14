@@ -516,4 +516,35 @@ function common.schaden.mod(tp, schwelle, schritt)
   return tp
 end
 
+common.path = {}
+
+function common.path.isabs(path)
+  return path:find("^/") == 1
+end
+
+function common.path.dirname(path)
+  local i = path:find("/+[^/]*$")
+  if not i then
+    return "."
+  else
+    return path:sub(1, math.max(i - 1, 1))
+  end
+end
+
+function common.path.join(path, ...)
+  if path == "" then
+    path = {}
+  else
+    path = {path}
+  end
+  for _, p in ipairs({...}) do
+    if #path > 0 and common.path.isabs(p) then
+      path = {p}
+    elseif p ~= "" and (#path == 0 or p ~= ".") then
+      table.insert(path, p)
+    end
+  end
+  return table.concat(path, "/")
+end
+
 return common
