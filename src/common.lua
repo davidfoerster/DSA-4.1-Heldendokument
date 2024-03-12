@@ -1,5 +1,6 @@
 local data = require("data")
 local schema = require("schema")
+require("stdext")
 
 local common = {}
 
@@ -355,15 +356,17 @@ end
 
 function common.render_delta(input)
   if type(input) == "number" then
-    if input < 0 then
-      tex.sprint(-2, "−")
-    elseif input > 0 then
-      tex.sprint(-2, "+")
+    local sign
+    if input >= 0.5 then
+      sign = "+"
+    elseif input <= -0.5 then
+      sign = "−"
+    else
+      sign = ""
     end
-    tex.sprint(common.round(math.abs(input)))
-  else
-    tex.sprint(-2, input)
+    input = string.format("%s%d", sign, math.round(math.abs(input)))
   end
+  tex.sprint(-2, input)
 end
 
 function common.merkmalliste(input, zauber)
