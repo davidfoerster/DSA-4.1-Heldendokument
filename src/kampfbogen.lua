@@ -3,6 +3,7 @@ local common = require("common")
 local schemadef = require("schemadef")
 local schema = require("schema")
 local silhouette = require("silhouette")
+require("stdext")
 
 local kampfbogen = {}
 
@@ -404,13 +405,12 @@ end
 
 function kampfbogen.energieleiste(label, val)
   tex.sprint(-2, label)
-  num = tonumber(val)
-  if num == nil then
+  val = tonumber(val)
+  if val == nil then
     tex.sprint("&&&&")
   else
     for i=1,4 do
-      tex.sprint("&")
-      tex.sprint(-2, common.round(num/i))
+      tex.sprint("&", math.round(val / i))
     end
   end
   tex.sprint("&")
