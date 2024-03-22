@@ -17,4 +17,8 @@ elseif n < #arg then
     "Zu viele Argumente: '%s'", table.concat(arg, "' '", n + 1)))
 end
 
-return assert(loadfile("values.lua", "t"))(arg[n])
+local filename = arg[n]
+local values = assert(loadfile("values.lua", "t")(filename))
+values.filename = filename
+
+return values
