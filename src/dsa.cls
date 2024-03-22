@@ -126,9 +126,10 @@
 \setlength{\fboxsep}{3mm}
 
 \newsavebox\blockbox
-\NewEnviron{dsaSheetBox}[1][\textwidth]{%
+\newcommand{\dsaSheetBoxBegin}[2]{%
+  \setlength{\fboxsep}{#2}%
   \begin{lrbox}{\blockbox}%
-    \noindent\hspace{\fboxsep}\begin{minipage}{#1-2\fboxsep}
+    \noindent\hspace{#2}\begin{minipage}{#1-2\fboxsep}
       \vspace{\fboxsep}%
       \BODY%
       \vspace{.66\fboxsep}%
@@ -155,6 +156,9 @@
     \fill[black!60] ($(textwidth.south east) - (0.08,-0.08)$) -- ($(textwidth.south east) - (0.1, -0.1)$) -- ($(textwidth.south west) + (0.1, 0.1)$) -- ($(textwidth.south west) + (0.08, 0.08)$) -- cycle;
   \end{tikzpicture}
 }
+
+\NewEnviron{dsaSheetBox}[1][\textwidth]{\dsaSheetBoxBegin{#1}{\fboxsep}}
+\NewEnviron{dsaSheetBox*}[2]{\dsaSheetBoxBegin{#1}{#2}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Character sheet macros

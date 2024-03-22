@@ -1,5 +1,5 @@
 \begin{dsaCharacterSheet}
-
+%
 \bgroup\renewcommand{\arraystretch}{1.325}
 \vspace*{-3pt}
 \begin{dsaSheetBox}
@@ -12,31 +12,25 @@
     \end{tabular}
 \end{dsaSheetBox}
 
-\vspace{-8pt}
-\begin{multicols}{2}
-\begin{dsaSheetBox}[.5\textwidth-.5\columnsep]
-    \begin{tabular}{p{2.3cm}p{\dimexpr\textwidth-4\tabcolsep-2.3cm}}
-        \directlua{frontseite.held:links()}
-    \end{tabular}
-\end{dsaSheetBox}%
-
-\columnbreak%
-\begin{dsaSheetBox}[.5\textwidth-.5\columnsep]
-
+\begin{dsaSheetBox}[.375\textwidth-\fboxsep]
     \begin{tabular}{p{2.5cm}p{\dimexpr\textwidth-4\tabcolsep-2.5cm}}
-        \directlua{frontseite.held:rechts()}
+        \directlua{frontseite.held:links()}
+        \hline
     \end{tabular}
 \end{dsaSheetBox}%
-\end{multicols}
-\vspace{-12pt}
-
-\begin{dsaSheetBox}[\textwidth]
+%
+\begin{dsaSheetBox*}{.25\textwidth}{0pt}
+    \centering\directlua{frontseite.held:portrait(nil)}%
+\end{dsaSheetBox*}%
+%
+\begin{dsaSheetBox}[.375\textwidth-\fboxsep]
     \begin{tabular}{p{\dimexpr\textwidth-2\tabcolsep}}
         \directlua{common.multiline_content({
-            name="Aussehen", rows=common.current_page.Aussehen,
+            name="Aussehen", rows=10,
             baselinestretch=1.35, preamble="Aussehen",
             hspace="10pt"}, data.Held.Aussehen)
         }
+        \hline
     \end{tabular}
 \end{dsaSheetBox}%
 
