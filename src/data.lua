@@ -1,15 +1,20 @@
-local i = 1
-while i <= #arg do
-  local name = arg[i]
-  i = i + 1
+local pathlib = require("pathlib")
 
-  if name == "heldendokument.tex" or name == "heldendokument-weiss.tex" then
-	break
+local n = nil
+for i, name in ipairs(arg) do
+  local _, ext = pathlib.splitext(name)
+  if ext:lower() == ".tex" then
+    n = i + 1
+    break
   end
 end
 
-if i < #arg then
-  tex.error("zu viele Argumente. Erstes überflüssiges Argument: '" .. tostring(arg[i+1]) .. "'")
+if not n then
+  tex.error(string.format(
+    "Keine .tex-Datei in der Argumentenliste: {%s}", table.concat(arg, ", ")))
+elseif n < #arg then
+  tex.error(string.format(
+    "Zu viele Argumente: '%s'", table.concat(arg, "' '", n + 1)))
 end
 
-return assert(loadfile("values.lua", "t"))(arg[i])
+return assert(loadfile("values.lua", "t"))(arg[n])
