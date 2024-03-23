@@ -15,12 +15,15 @@
 \begin{dsaSheetBox}[.375\textwidth-\fboxsep]
     \begin{tabular}{p{2.5cm}p{\dimexpr\textwidth-4\tabcolsep-2.5cm}}
         \directlua{frontseite.held:links()}
-        \hline
     \end{tabular}
 \end{dsaSheetBox}%
 %
 \begin{dsaSheetBox*}{.25\textwidth}{0pt}
-    \centering\directlua{frontseite.held:portrait(nil)}%
+    \setlength{\unitlength}{\textwidth}
+    \begin{picture}(1, 1.435)
+        \put(0,1.3){\makebox[\unitlength]{\textmansontt{Wappen/Porträt}}}%
+        \put(0,0){\directlua{frontseite.held:portrait()}}%
+    \end{picture}
 \end{dsaSheetBox*}%
 %
 \begin{dsaSheetBox}[.375\textwidth-\fboxsep]
@@ -30,7 +33,6 @@
             baselinestretch=1.35, preamble="Aussehen",
             hspace="10pt"}, data.Held.Aussehen)
         }
-        \hline
     \end{tabular}
 \end{dsaSheetBox}%
 

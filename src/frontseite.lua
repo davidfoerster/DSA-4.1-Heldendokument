@@ -55,27 +55,25 @@ function held_basis.links(self)
     preamble=self.labels["Titel"], hspace="54.92pt"}, data.Held.Titel)
 end
 
-function held_basis.portrait(self, height)
+function held_basis.portrait(self, width, height)
   local portrait = data.Held.Portrait
-  if height == nil then
-    height = [[1.435\textwidth]]
-  end
-  if portrait == nil or portrait.filename == "" then
-    tex.sprint("\\vspace{", height, "}")
-  else
-    local opts = {}
+  if portrait and portrait.filename ~= "" then
+    local opts = {
+      width = width or [[\unitlength]],
+      height = height or [[1.435\unitlength]],
+    }
     for _, k in ipairs(portrait.order) do opts[k] = portrait[k] end
     opts.filename = nil
-    tex.sprint([[\includegraphics[width=\textwidth,height=]], height)
+    tex.sprint("\\includegraphics[")
     for k, v in pairs(opts) do
       if v ~= nil and v ~= "" then
         tex.sprint(",", k, "={", tostring(v), "}")
       end
     end
-    tex.sprint(
-      "]{\\detokenize{",
-      pathlib.join(pathlib.dirname(data.filename), portrait.filename),
-      "}}")
+    tex.sprint("]{{")
+    tex.sprint(-2,
+      pathlib.join(pathlib.dirname(data.filename), portrait.filename))
+    tex.sprint("}}")
   end
 end
 
