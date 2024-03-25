@@ -1,4 +1,4 @@
-local my_source = debug.getinfo(1).source
+local my_source = debug.getinfo(1, "S").source
 local string_metatable = getmetatable("")
 
 local d = {
@@ -267,15 +267,15 @@ function TypeClass:err(msg, ...)
   local info
   repeat
     i = i + 1
-    info = debug.getinfo(i)
+    info = debug.getinfo(i, "Sl")
   until info == nil or info.source ~= my_source
   if info == nil then
     i = 2
-    info = debug.getinfo(i)
+    info = debug.getinfo(i, "Sl")
     repeat
       io.stderr:write(string.format("\n%s(%d)\n", info.short_src, info.currentline))
       i = i + 1
-      info = debug.getinfo(i)
+      info = debug.getinfo(i, "Sl")
     until info == nil
     io.stderr:write("error:")
   else
