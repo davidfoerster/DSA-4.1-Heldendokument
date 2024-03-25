@@ -38,9 +38,10 @@ sub_pdf(){
 	srcdir="${src%/*}"
 	cd -- "$SOURCES/src"
 	SOURCE_DATE_EPOCH="$SOURCE_DATE_EPOCH" exec latexmk \
-		-lualatex="lualatex %O %S '${src//\'/\'\\\'\'}'" -jobname="$jobname" \
+		-lualatex="lualatex --luadebug %O %S '${src//\'/\'\\\'\'}'" \
+		-jobname="$jobname" \
 		-output-directory="$srcdir" -aux-directory="$srcdir/build" \
-		-interaction=batchmode -halt-on-error \
+		-interaction=batchmode -halt-on-error -shell-escape \
 		"$BASE_NAME.tex"
 }
 

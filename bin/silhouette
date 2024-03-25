@@ -11,5 +11,5 @@ export SOURCE_DATE_EPOCH
 exec latexmk \
 	-output-directory="$out_dir" -aux-directory="$out_dir/build" \
 	-usepretex="\\def\\SilKind{$1}\\def\\SilVariant{$2}" \
-	-interaction=batchmode -halt-on-error \
+	-interaction=batchmode -halt-on-error -shell-escape \
 	silhouette.tex
