@@ -110,6 +110,7 @@
 % environments
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\ifbgwallpaper
 \renewcommand{\ThisCenterWallPaper}[3][]{%
   \AddToShipoutPicture*{\put(\LenToUnit{\wpXoffset},\LenToUnit{\wpYoffset}){%
     \parbox[b][\paperheight]{\paperwidth}{%
@@ -119,6 +120,7 @@
       \vfill
   }}}
 }
+\fi
 
 \newenvironment{dsaCharacterSheet}{
   \pagebreak
