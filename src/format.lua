@@ -16,4 +16,12 @@ function format.group_thousands(value, sep, group_length)
   return table.concat(thousands, sep or ".")
 end
 
+function format.decimal(value, fmt, sep)
+	if fmt then
+		value = string.format(fmt, value)
+	end
+	local s, _ = string.gsub(value, "%.", sep or ",", 1)
+	return s
+end
+
 return format

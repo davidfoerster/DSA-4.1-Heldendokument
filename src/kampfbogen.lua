@@ -4,6 +4,7 @@ local common = require("common")
 local schemadef = require("schemadef")
 local schema = require("schema")
 local silhouette = require("silhouette")
+local format = require("format")
 
 local kampfbogen = {}
 
@@ -345,7 +346,9 @@ function kampfbogen.ruestungsteile()
     local rs, be = data:gesamtRuestung({teil}, true)
     table.insert(items, {teil.Name, rs, be})
   end
-  common.inner_rows(items, 3, common.current_page.Ruestung)
+  local function formatter(v) tex.sprint(-2, format.decimal(v, "%.1f")) end
+  common.inner_rows(
+    items, 3, common.current_page.Ruestung, {nil, formatter, formatter})
 end
 
 function kampfbogen.ruestung(name)
