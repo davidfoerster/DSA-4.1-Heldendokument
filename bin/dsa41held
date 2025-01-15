@@ -18,14 +18,23 @@ sub_help(){
 }
 
 sub_pdf(){
-	local BASE_NAME SOURCE_DATE_EPOCH src srcdir jobname
-	case "${1-}" in
-		-w|--white)
-			BASE_NAME=heldendokument-weiss; shift;;
-		*)
-			BASE_NAME=heldendokument;;
-	esac
-	[ "${1-}" != -- ] || shift
+	local BASE_NAME=heldendokument SOURCE_DATE_EPOCH src srcdir jobname
+	local -a latexmk_options=()
+	while :; do
+		case "${1-}" in
+			-w|--white)
+				BASE_NAME=heldendokument-weiss;;
+			-[cCg]*)
+				latexmk_options+=("$1");;
+			--)
+				shift; break;;
+			-?*)
+				printf 'Unbekannte Kommandozeilenoption: "%s"\n' "$1" >&2; exit 64;;
+			*)
+				break;;
+		esac
+		shift
+	done
 	src="${1-}"
 	if [ -z "$src" ]; then
 		echo 'Pfad zur Heldendatei muss als Eingabe angegeben werden!' >&2
@@ -42,6 +51,7 @@ sub_pdf(){
 		-jobname="$jobname" \
 		-output-directory="$srcdir" -aux-directory="$srcdir/build" \
 		-interaction=batchmode -halt-on-error -shell-escape \
+		${latexmk_options[@]:+"${latexmk_options[@]}"} \
 		"$BASE_NAME.tex"
 }
 
