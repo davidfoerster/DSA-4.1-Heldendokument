@@ -1,7 +1,7 @@
 {
   description = "Heldendokument-Generator und Webinterface dazu";
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     utils.url = "github:numtide/flake-utils";
     nix-filter.url = "github:numtide/nix-filter";
     wds-handouts = {
@@ -69,7 +69,7 @@
             dsa41held = stdenvNoCC.mkDerivation rec {
               name = "dsa41held";
               src = filtered-src;
-              nativeBuildInputs = [ poppler_utils imagemagick unzip librsvg ];
+              nativeBuildInputs = [ poppler-utils imagemagick unzip librsvg ];
               propagatedBuildInputs = [ coreutils tex coreutils bash libxslt ];
               phases = [ "unpackPhase" "installPhase" ];
               GENERATOR = (import ./dsa41held.sh.nix) {
@@ -91,7 +91,7 @@
                 cp ${copse} "$out/share/fonts/Copse-Regular.ttf"
                 cp ${mason}/MansonBold.otf "$out/share/fonts/MansonBold.otf"
                 cp "${fanpaket}/DSA_Fanpaket_PNG/Fan-Produkt-Logo.png" "$out/share/img/logo-fanprodukt.png"
-                ${poppler_utils}/bin/pdfimages -f 2 -l 2 "${wds-handouts}" wds
+                ${poppler-utils}/bin/pdfimages -f 2 -l 2 "${wds-handouts}" wds
                 ${imagemagick}/bin/convert wds-000.ppm "$out/share/img/wallpaper.jpg"
                 cp import.xsl heldensoftware-meta.xml "$out/share"
 
