@@ -46,7 +46,7 @@ sub_pdf(){
       -pretex="\pdfvariable suppressoptionalinfo 512\relax"\
       -usepretex -cd -file-line-error -halt-on-error \
       -r "$SOURCES/share/.latexmkrc" \
-      -lualatex="${tex}/bin/lualatex %O %S \"$ABS_INPUT\"" \
+      -lualatex="${tex}/bin/lualatex --luadebug %O %S \"$ABS_INPUT\"" \
       "$SOURCES/share/$BASE_NAME.tex"
   mv -- "$DIR/$BASE_NAME.pdf" "$RES"
   rm -rf "$DIR"

@@ -85,7 +85,7 @@
 
 \newfontfamily{\mansontt}[
   Path=fonts/,
-  Extension = .otf,
+  Extension = .ttf,
   UprightFont = MansonBold
 ]{Manson}
 \DeclareTextFontCommand{\textmansontt}{\mansontt}

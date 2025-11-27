@@ -3,13 +3,13 @@
     "fanpaket": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-uZbUMfQj4teiX8sTlrXipIerwtXomLSysR3qMTySKeM=",
-        "type": "tarball",
-        "url": "https://dsa-satinavsketten.de/fileadmin/downloads/offiziell/Das_Schwarze_Auge_Fanpaket_2011_08_19.zip"
+        "narHash": "sha256-c9NFVjieay3vU8OeDw3GgAsXRvk8C+MTyvwdPQit+IE=",
+        "type": "file",
+        "url": "https://www.ulisses-spiele.de/assets/download/dasschwarze_auge_fanpaket.zip"
       },
       "original": {
-        "type": "tarball",
-        "url": "https://dsa-satinavsketten.de/fileadmin/downloads/offiziell/Das_Schwarze_Auge_Fanpaket_2011_08_19.zip"
+        "type": "file",
+        "url": "https://www.ulisses-spiele.de/assets/download/dasschwarze_auge_fanpaket.zip"
       }
     },
     "nix-filter": {
@@ -70,13 +70,13 @@
     "wds-handouts": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-VWJEBDn1xmh9LTYh0r5RUP0/rTNDL5xWh3QK/q7/t1E=",
+        "narHash": "sha256-nGj6We9aW10i/r0Zz4NSuq1MO0QuvfoFLDDIsO5rZ70=",
         "type": "file",
-        "url": "https://dsa-satinavsketten.de/fileadmin/downloads/offiziell/Regelmaterial%26Errata/WdS-Handouts.pdf"
+        "url": "https://ulisses-spiele.de/wp-content/uploads/2025/11/DSA4-Kampfprotokoll-und-Initiativeuebersicht.pdf"
       },
       "original": {
         "type": "file",
-        "url": "https://dsa-satinavsketten.de/fileadmin/downloads/offiziell/Regelmaterial%26Errata/WdS-Handouts.pdf"
+        "url": "https://ulisses-spiele.de/wp-content/uploads/2025/11/DSA4-Kampfprotokoll-und-Initiativeuebersicht.pdf"
       }
     }
   },

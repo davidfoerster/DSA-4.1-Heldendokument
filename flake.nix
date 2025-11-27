@@ -6,12 +6,12 @@
     nix-filter.url = "github:numtide/nix-filter";
     wds-handouts = {
       url =
-        "https://dsa-satinavsketten.de/fileadmin/downloads/offiziell/Regelmaterial&Errata/WdS-Handouts.pdf";
+        "https://ulisses-spiele.de/wp-content/uploads/2025/11/DSA4-Kampfprotokoll-und-Initiativeuebersicht.pdf";
       flake = false;
     };
     fanpaket = {
       url =
-        "https://dsa-satinavsketten.de/fileadmin/downloads/offiziell/Das_Schwarze_Auge_Fanpaket_2011_08_19.zip";
+        "file+https://www.ulisses-spiele.de/assets/download/dasschwarze_auge_fanpaket.zip";
       flake = false;
     };
   };
@@ -38,8 +38,8 @@
               "b852e682f0c66de4db1835f8545ff2e94761549987a4607447b069e973f50b1d";
           };
           mason = pkgs.fetchzip {
-            url = "https://fontpark.com/en/download/36e2c2f1bbe6a284411f8c1a924a367c";
-            hash = "sha256-3jDPoha3Vk3VeDtljHLtBrz9OtAihEcdfPkhexnVRVk=";
+            url = "https://media.fontsgeek.com/download/zip/m/a/mason-bold_yy2hY.zip";
+            hash = "sha256-mAO79kDO7KxC7qnLdVD6Lj0TKvfQ5rsNheMwnboj3Fo=";
             extension = "zip";
           };
           tex = pkgs.texlive.combine {
@@ -89,10 +89,10 @@
                 done
                 cp ${newg8}/NewG8-{Reg,Bol,BolIta,Ita}.otf "$out/share/fonts"
                 cp ${copse} "$out/share/fonts/Copse-Regular.ttf"
-                cp ${mason}/MansonBold.otf "$out/share/fonts/MansonBold.otf"
-                cp "${fanpaket}/DSA_Fanpaket_PNG/Fan-Produkt-Logo.png" "$out/share/img/logo-fanprodukt.png"
-                ${poppler-utils}/bin/pdfimages -f 2 -l 2 "${wds-handouts}" wds
-                ${imagemagick}/bin/convert wds-000.ppm "$out/share/img/wallpaper.jpg"
+                cp "${mason}/Mason Bold.ttf" "$out/share/fonts/MansonBold.ttf"
+                ${pkgs.unzip}/bin/unzip -p ${fanpaket} "Das Schwarze Auge - Fanpaket - 2013.06.28/Logo - Fanprodukt.png" >"$out/share/img/logo-fanprodukt.png"
+                ${poppler-utils}/bin/pdfimages -f 1 -l 1 "${wds-handouts}" wds
+                ${imagemagick}/bin/convert wds-001.ppm "$out/share/img/wallpaper.jpg"
                 cp import.xsl heldensoftware-meta.xml "$out/share"
 
                 printenv GENERATOR >$out/bin/dsa41held
