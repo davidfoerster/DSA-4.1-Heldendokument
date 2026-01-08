@@ -158,15 +158,16 @@
 \vspace{-10pt}
 
 \begin{dsaSheetBox}
-    \begin{NiceTabular}{p{3.067cm}|x{3.4cm}|x{0.8cm}|x{0.8cm}|x{0.8cm}|x{1.2cm}|x{0.8cm}|x{0.8cm}|x{0.8cm}|x{0.8cm}|x{0.8cm}|x{0.8cm}|x{0.8cm}|x{0.8cm}|x{0.8cm}}
+    \begin{NiceTabular}{p{34mm}|x{34mm}|x{7mm}|x{7mm}|x{7mm}|x{12mm}|x{7mm}|x{7mm}|x{7mm}|x{7mm}|x{7mm}|x{7mm}|x{7mm}|x{7mm}|x{8mm}|x{8mm}}
     \CodeBefore
         \rowcolors{2}{gray!30}{white}
     \Body
         \scriptsize\textbf{Name} & \scriptsize\textbf{Art} & \scriptsize\textbf{INI} & \scriptsize\textbf{AT} & \scriptsize\textbf{PA} & \scriptsize\textbf{TP} & \scriptsize\textbf{LE} & \scriptsize\textbf{RS} &
-        \scriptsize\textbf{KO} & \scriptsize\textbf{GS} & \scriptsize\textbf{AU} & \scriptsize\textbf{MR} &
-        \scriptsize\textbf{LO} & \scriptsize\textbf{TK} & \scriptsize\textbf{ZK} \\ \hline
+        \scriptsize\textbf{KO} & \scriptsize\textbf{KK} & \scriptsize\textbf{GS} & \scriptsize\textbf{AU} &
+        \scriptsize\textbf{MR} & \scriptsize\textbf{LO} & \scriptsize\textbf{TK} & \scriptsize\textbf{ZK}
+        \\ \hline
         \directlua{
-            common.inner_rows(data.Tiere, 15, common.current_page.Tiere, {[6] = function(v) common.schaden.render(common.schaden.parse(v)) end})
+            common.inner_rows(data.Tiere, 16, common.current_page.Tiere, {[6] = function(v) common.schaden.render(common.schaden.parse(v)) end})
         }
     \end{NiceTabular}
 \end{dsaSheetBox}
