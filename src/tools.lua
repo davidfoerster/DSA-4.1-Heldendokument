@@ -96,15 +96,19 @@ if validate then
   local prev_pcount = 0
   local values = assert(loadfile("values.lua", "t"))
   for i = curarg + 1,#arg do
-    values(arg[i])
+    local data = values(arg[i])
+    io.stdout:write(
+      string.format(
+        "%s AP: %d gesamt, %d eingesetzt, %d Guthaben\n",
+        data.Held.Name, data.AP.Gesamt, data.AP.Eingesetzt,
+        data.AP.Gesamt - data.AP.Eingesetzt))
   end
   if res == 0 then
     io.stdout:write("all files validated successfully! This input will process the following files:\n---\n")
     local l = schema.Layout:instance()
     for i,p in ipairs(l.value) do
       local pKind = getmetatable(p).name
-      io.stdout:write(pages_source[pKind])
-      io.stdout:write("\n")
+      io.stdout:write(pages_source[pKind], "\n")
     end
     io.stdout:write("---\n")
   end
