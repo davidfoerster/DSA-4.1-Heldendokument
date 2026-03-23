@@ -1,20 +1,45 @@
 #!/bin/bash
 set -eu
+exec <&-
 
 sub_help(){
-	echo "Benutzung: dsa41held <unterkommando> [options] <datei>\n"
-	echo "Unterkommandos:\n"
-	echo "    pdf            baue ein PDF mit Namen <datei ohne .lua>.pdf"
-	echo "        -w         weißer Hintergrund statt der Karte"
-	echo "        <datei>    Lua-Datei, die die Heldendaten enthält\n"
-	echo "    ereignisse     zeige Tabelle aller Steigerungsereignisse"
-	echo "        <datei>    Lua-Datei, die die Heldendaten enthält\n"
-	echo "    import         importiere einen Held aus der Heldensoftware."
-	echo "                   gibt Lua-Daten auf der Standardausgabe aus."
-	echo "        <datei>    XML-Datei, die einen aus der Heldensoftware exportierten"
-	echo "                   Helden enthält.\n"
-	echo "    validate       Validiere eine gegebene Lua-Datei gegen das Schema."
-	echo "        <datei>    Lua-Datei, die die Heldendaten enthält.\n"
+	printf \
+'Benutzung: %s <unterkommando> [options] <datei>
+
+Unterkommandos:
+    pdf            baue ein PDF mit Namen <datei ohne .lua>.pdf
+        [-w|--white]
+                   weißer Hintergrund statt der Karte
+        [-g|-gg]   (Super-)-Go-Modus [siehe latexmk]
+        <datei>    Lua-Datei, die die Heldendaten enthält
+
+    ereignisse     zeige Tabelle aller Steigerungsereignisse
+        <datei>    Lua-Datei, die die Heldendaten enthält
+
+    import         importiere einen Held aus der Heldensoftware.
+                   gibt Lua-Daten auf der Standardausgabe aus.
+        <datei>    XML-Datei, die einen aus der Heldensoftware exportierten
+                   Helden enthält.
+
+    validate       Validiere eine gegebene Lua-Datei gegen das Schema.
+        <datei>    Lua-Datei, die die Heldendaten enthält.
+'	"${BASH_ARGV0##*/}"
+}
+
+sub_opterrmsg(){
+	exec >&2
+	local fmt= progname="$BASH_ARGV0" shortname="${BASH_ARGV0%%*/}"
+	if [ "$shortname" != "$progname" ] && [ "$progname" -ef "$(type -P -- "$shortname")" ]; then
+		progname="$shortname"
+	fi
+	if [ "$#" -eq 1 ]; then
+		fmt='%s\n'
+	elif [ "$#" -gt 1 ]; then
+		fmt="$1\\n"
+		shift
+	fi
+	printf -- "$fmt"'Führe "%s help" für Hilfe aus.\n' "$@" "$progname"
+	exit 64
 }
 
 sub_pdf(){
@@ -29,7 +54,7 @@ sub_pdf(){
 			--)
 				shift; break;;
 			-?*)
-				printf 'Unbekannte Kommandozeilenoption: "%s"\n' "$1" >&2; exit 64;;
+				sub_opterrmsg 'Unbekannte Kommandozeilenoption: "%s"' "$1";;
 			*)
 				break;;
 		esac
@@ -37,8 +62,15 @@ sub_pdf(){
 	done
 	src="${1-}"
 	if [ -z "$src" ]; then
-		echo 'Pfad zur Heldendatei muss als Eingabe angegeben werden!' >&2
-		return 64
+		sub_opterrmsg 'Pfad zur Heldendatei muss als Eingabe angegeben werden!'
+	fi
+	if [ "$#" -gt 1 ]; then
+		exec >&2
+		echo -n 'Zu viele Kommandozeilenargumente:'
+		shift
+		printf ' "%s"' "$@"
+		echo
+		sub_opterrmsg
 	fi
 	jobname="${src##*/}"
 	jobname="${jobname%.lua}"
@@ -46,13 +78,13 @@ sub_pdf(){
 	[[ "$src" == /* ]] || src="$PWD/$src"
 	srcdir="${src%/*}"
 	cd -- "$SOURCES/src"
-	SOURCE_DATE_EPOCH="$SOURCE_DATE_EPOCH" exec latexmk \
-		-lualatex="lualatex --luadebug %O %S '${src//\'/\'\\\'\'}'" \
-		-jobname="$jobname" \
-		-output-directory="$srcdir" -aux-directory="$srcdir/build" \
+	export SOURCE_DATE_EPOCH
+	exec latexmk \
+		-lualatex="lualatex %O %S '${src//\'/\'\\\'\'}'" -jobname="$jobname" \
+		-output-directory="$srcdir" -aux-directory="${TMPDIR:-/tmp}/latexmk" \
 		-interaction=batchmode -halt-on-error -shell-escape \
 		${latexmk_options[@]:+"${latexmk_options[@]}"} \
-		"$BASE_NAME.tex"
+		-cd "$SOURCES/src/$BASE_NAME.tex"
 }
 
 sub_ereignisse(){
@@ -78,7 +110,11 @@ case "${1-}" in
 		sub_help
 		;;
 	pdf|ereignisse|import|validate)
-		SOURCES="$(readlink -f -- "$0")"
+		if [ -L "$0" ]; then
+			SOURCES="$(readlink -f -- "$0")"
+		else
+			SOURCES="$0"
+		fi
 		SOURCES="${SOURCES%/*}"
 		SOURCES="${SOURCES%/bin}"
 		cmd="sub_$1"
@@ -86,7 +122,6 @@ case "${1-}" in
 		"$cmd" "$@"
 		;;
 	*)
-		printf 'Fehler: Unbekanntes Unterkommando `%s\x27.\nListe von Unterkommandos verfügbar via `%s --help\x27\n' "${1-}" "$0" >&2
-		exit 64
+		sub_opterrmsg 'Fehler: unbekanntes Unterkommando "%s"' "${1-}"
 		;;
 esac
