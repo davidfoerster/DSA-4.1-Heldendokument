@@ -163,32 +163,22 @@ end
 -- }
 function common.multiline_content(spec, ...)
   if spec.cols ~= nil and spec.cols > 1 then
-    tex.sprint([[\multicolumn{]])
-    tex.sprint(spec.cols)
-    tex.sprint("}{")
-    tex.sprint(spec.col)
-    tex.sprint("}{")
+    tex.sprint([[\multicolumn{]], spec.cols, "}{", spec.col, "}{")
   end
   if spec.rows > 1 then
-    tex.sprint([[\multirow[t]{]])
-    tex.sprint(spec.rows)
-    tex.sprint([[}{=}{\renewcommand{\baselinestretch}{]])
-    tex.sprint(spec.baselinestretch)
-    tex.sprint([[}\normalfont]])
+    tex.sprint(
+      [[\multirow[t]{]], spec.rows, [[}{=}{\renewcommand{\baselinestretch}{]],
+      spec.baselinestretch, [[}\normalfont]])
   end
   if spec.fontsize ~= nil then
-    tex.sprint([[\normalfont\fontsize{]])
-    tex.sprint(spec.fontsize[1])
-    tex.sprint([[}{]])
-    tex.sprint(spec.fontsize[2])
-    tex.sprint([[}\selectfont]])
+    tex.sprint(
+      [[\normalfont\fontsize{]], spec.fontsize[1], "}{", spec.fontsize[2],
+      [[}\selectfont]])
   end
   if spec.preamble ~= nil and spec.preamble ~= "" then
-    tex.sprint([[\textmansontt{\textbf{]])
-    tex.sprint(spec.preamble)
-    tex.sprint([[}}\hspace{]])
-    tex.sprint(spec.hspace)
-    tex.sprint("}")
+    tex.sprint(
+      [[\textmansontt{\textbf{]], spec.preamble, [[}}\hspace{]], spec.hspace,
+      "}")
   end
 
   local first = true
