@@ -34,10 +34,12 @@ end
 local function atpa_mod(basis, talent, schwelle, schritt, wm, art, spez)
   local val = basis
   local cur_kk = data:cur("KK")
-  if cur_kk ~= "" and schwelle ~= nil and schritt ~= nil and schritt > 0 then
-    if cur_kk < schwelle then
-      val = val + common.div_trunc(cur_kk - schwelle, schritt)
-    end
+  if cur_kk == "" or schritt <= 0 then
+    schwelle = nil
+    schritt = nil
+  end
+  if schwelle ~= nil and cur_kk < schwelle then
+    val = val - (schwelle - cur_kk) // schritt
   end
   if art ~= nil and spez ~= nil then
     for _, s in ipairs(spez) do
