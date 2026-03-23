@@ -8,7 +8,7 @@
             \directlua{
                 common.multiline_content({
                     name="Kleidung", rows=common.current_page.Kleidung,
-                    preamble="\noexpand\\footnotesize Kleidung", hspace="5pt",
+                    preamble=[[\noexpand\footnotesize Kleidung]], hspace="5pt",
                     baselinestretch=1.033, fontsize={8,12}
                 }, data.Kleidung)
             }

@@ -138,12 +138,7 @@ local nahkampf_render = {
 }
 
 nahkampf_render[2]= {true, function(v)
-  local s = nahkampf_render.short[v]
-  if s ~= nil then
-    tex.sprint(-2, s)
-  else
-    tex.sprint(-2, v)
-  end
+  tex.sprint(-2, nahkampf_render.short[v] or v)
 end}
 nahkampf_render[3]= {false, function(v, talent, ebe)
   if talent ~= nil then

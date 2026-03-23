@@ -652,10 +652,10 @@ function values:talentsteigerung(e)
         if e.AT ~= nil then
           t.AT = t.AT + e.AT
         end
-        event[2] = -1 * ap
+        event[2] = -ap
         event[3] = faktor
         local kosten = faktor:apply(ap)
-        event[4] = -1 * kosten
+        event[4] = -kosten
         event[5] = values:ap_mod(kosten)
         return event
       end
