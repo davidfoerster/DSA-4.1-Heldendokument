@@ -106,34 +106,35 @@ local eigenschaften = {
 }
 
 function eigenschaften.links(self)
+  tex.sprint([[\Xhline{2\arrayrulewidth}]])
   for i, e in ipairs({"MU", "KL", "IN", "CH", "FF", "GE", "KO", "KK"}) do
+    local values = data.eig[e]
     if i ~= 1 then
-      tex.sprint([[\\]])
+      tex.sprint([[\\\hline]])
     end
-    tex.sprint(i == 1 and [[\Xhline{2\arrayrulewidth}]] or [[\hline]])
+    -- column 1
     tex.sprint([[\small\mansontt\bfseries]])
     tex.sprint(-2, self.label[e])
-    for j=1,3 do
-      tex.sprint("&")
-      if j == 3 then
-        tex.sprint([[\cellcolor{white}]])
-      end
-      local val = data.eig[e][j]
-      if j == 1 then
-        tex.sprint(-2, eigenschaften.render_mod(val))
-      elseif j == 2 and i ~= 9 then
-        if val ~= 0 then
-          tex.sprint([[\begin{minipage}[t][0.49em][b]{0.8cm}\centering\small]])
-          tex.sprint(-2, val)
-          tex.sprint([[\\\tiny\textbf{Max: }]])
-          tex.sprint(data.sparse(val, 2/3))
-          tex.sprint([[\\]])
-          tex.print()
-          tex.print([[\vspace{0.9pt}\end{minipage}]])
-        end
-      elseif val ~= 0 then
-        tex.sprint(-2, val)
-      end
+    -- column 2
+    local val = values[1]
+    tex.sprint("&")
+    tex.sprint(-2, eigenschaften.render_mod(val))
+    -- column 3
+    val = values[2]
+    tex.sprint("&")
+    if val ~= 0 then
+      tex.sprint([[\begin{minipage}[t][0.49em][b]{0.8cm}\centering\small]])
+      tex.sprint(-2, val)
+      tex.sprint([[\\\tiny\textbf{Max: }]])
+      tex.sprint(data.sparse(val, 2/3))
+      tex.print([[\\]])
+      tex.print([[\vspace{0.9pt}\end{minipage}]])
+    end
+    -- column 4
+    val = values[3]
+    tex.sprint([[&\cellcolor{white}]])
+    if val ~= 0 then
+      tex.sprint(-2, val)
     end
   end
   tex.sprint([[\\\Xhline{2\arrayrulewidth}\small\mansontt\bfseries]])
