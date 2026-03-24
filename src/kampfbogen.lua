@@ -188,11 +188,7 @@ local fernkampf_render = {
     end
   end},
   [2]= {true, function(v)
-    if v == "Belagerungswaffen" then
-      tex.sprint("Belager")
-    else
-      tex.sprint(-2, v)
-    end
+    tex.sprint(-2, v == "Belagerungswaffen" and "Belager" or v)
   end},
   [3]= {false, function(v, talent, ebe)
     if talent ~= nil and #talent >= 3 then
@@ -242,11 +238,11 @@ local waffenlos_render = {
     end
     local added = 0
     for _, t in ipairs(data.SF.Waffenlos:getlist("Kampfstil")) do
-      if v.Name == t.VerbessertesTalent and added < 2 then
-        atb = atb + 1
+      if v.Name == t.VerbessertesTalent then
         added = added + 1
       end
     end
+    atb = atb + math.min(added, 2)
     tex.sprint(-2, atpa_mod(atb - ebe // 2, talent.AT, v["TP/KK Schwelle"], v["TP/KK Schritt"], 0))
   end},
   [6]= {false, function(v, talent, ebe)
@@ -256,11 +252,11 @@ local waffenlos_render = {
     end
     local added = 0
     for _, t in ipairs(data.SF.Waffenlos:getlist("Kampfstil")) do
-      if v.Name == t.VerbessertesTalent and added < 2 then
-        pab = pab + 1
+      if v.Name == t.VerbessertesTalent then
         added = added + 1
       end
     end
+    pab = pab + math.min(added, 2)
     tex.sprint(-2, atpa_mod(pab - (ebe + 1) // 2, data.PA(talent), v["TP/KK Schwelle"], v["TP/KK Schritt"], 0))
   end},
   [7]= {false, function(v, talent, ebe)
