@@ -535,7 +535,10 @@ schema.V = 5
 schema.VI = 6
 
 local Distanzklasse = d.Matching:def({name = "Distanzklasse", description = "Eine Distanzklasse."}, "[HNSP]*")
-local Schaden = d.Matching:def({name = "Schaden", description = "Trefferpunkte einer Waffe."}, "[0-9]*W[0-9]*", "[0-9]*W[0-9]*[%+%-][0-9]+")
+local Schaden = d.Matching:def(
+  {name = "Schaden", description = "Trefferpunkte einer Waffe."},
+  "([0-9]*)W([0-9]*)[A]?", "([0-9]*)W([0-9]*)([%+%-][0-9]+)[A]?")
+schema.Schaden = Schaden
 local Nahkampfwaffe = d.Row:def({name = "Nahkampfwaffe", description = "Eine Nahkampfwaffe."},
   {"Name", String}, {"Talent", String}, {"DK", Distanzklasse, ""},
   {"TP", Schaden, ""}, {"TP/KK Schwelle", OptNum, {}}, {"TP/KK Schritt", OptNum, {}},

@@ -434,72 +434,61 @@ function common.div_trunc(numerator, denominator)
 end
 
 
-common.schaden = {}
+common.schaden = {
+  patterns = {"^([0-9]+)[A]?$", table.unpack(schema.Schaden.patterns)},
+}
 
 function common.schaden.parse(input)
-  local orig = input
-  local n_start, n_end = string.find(input, "^[0-9]+")
-  local num = nil
-  if n_start ~= nil then
-    num = string.sub(input, n_start, n_end)
-    input = string.sub(input, n_end + 1)
-  end
-  if string.len(input) == 0 then
-    if num == nil then
-      return {num = 0}
-    else
-      return {num = num}
+  local match = nil
+  for _, pattern in ipairs(common.schaden.patterns) do
+    match = table.pack(string.match(input, pattern))
+    if #match > 0 then
+      break
     end
   end
-  local ret = {dice = num}
-  local first = string.sub(input, 1, 1)
-  if first == "W" or first == "w" then
-    input = string.sub(input, 2)
-    n_start, n_end = string.find(input, "^[0-9]+")
-    if n_start == nil then
-      ret.die = 6
-    else
-      ret.die = tonumber(string.sub(input, n_start, n_end))
-      input = string.sub(input, n_end + 1)
+  if match == nil or #match == 0 then
+    tex.error(string.format("Ungültige TP-Spezifikation: %q", input))
+  end
+
+  assert(#match <= 3)
+  local result = {
+    dice=1, die=6, num=0,
+    tpa=(string.find(input, "A", #input, true) ~= nil)
+  }
+  if #match == 1 or #match == 3 then
+    result.num = tonumber(table.remove(match)) or 0
+  end
+  for i, k in ipairs({"dice", "die"}) do
+    if match[i] ~= "" then
+      result[k] = tonumber(match[i]) or 0
     end
-  else
-    tex.error("ungültige TP: '" .. orig .. "' (W/w erwartet bei '" .. first .. "')")
   end
-  if #input == 0 then
-    ret.num = 0
-    return ret
-  end
-  first = string.sub(input, 1, 1)
-  if first ~= "+" and first ~= "-" then
-    tex.error("ungültige TP: '" .. orig .. "' (+/- erwartet bei '" .. first .. "')")
-  end
-  ret.num = tonumber(input)
-  if ret.num == nil then
-    tex.error("ungültige TP: '" .. orig .. "' (ungültiger Summand: '" .. input .. "')")
-  end
-  return ret
+  return result
 end
 
 function common.schaden.render(tp)
-  if tp.dice ~= nil then
+  local has_die = (tp.dice or 0) ~= 0 and (tp.die or 0) ~= 0
+  if has_die then
     tex.sprint(-2, tp.dice)
-  end
-  if tp.die ~= nil then
-    if tp.die == 6 then
-      tex.sprint([[\hspace{1pt}\faDiceD6\hspace{1pt}]])
-    elseif tp.die == 20 then
-      tex.sprint([[\hspace{1pt}\faDiceD20\hspace{1pt}]])
+    if tp.die == 6 or tp.die == 20 then
+      tex.sprint(string.format([[\hspace{1pt}\faDiceD%d\hspace{1pt}]], tp.die))
     else
-      tex.sprint(-2, "W" .. tp.die)
+      tex.sprint(-2, "W", tp.die)
     end
   end
-  if tp.num ~= 0 then
+  if tp.num and not (has_die and tp.num == 0) then
+    local sign
     if tp.num < 0 then
-      tex.sprint(-2, "−")
-    elseif tp.die ~= nil then
-      tex.sprint(-2, "+")
+      sign = "−"
+    elseif has_die then
+      sign = "+"
+    else
+      sign = ""
     end
-    tex.sprint(-2, math.round(math.abs(tp.num)))
+    tex.sprint(-2, sign, math.abs(math.round(tp.num)))
+  end
+  if tp.tpa then
+    tex.sprint(-2, "(A)")
   end
 end
 
