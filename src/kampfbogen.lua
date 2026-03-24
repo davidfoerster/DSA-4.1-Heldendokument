@@ -53,6 +53,10 @@ local function atpa_mod(basis, talent, schwelle, schritt, wm, art, spez)
   return type(wm) == "number" and val + wm or val
 end
 
+local function render_text(val)
+  tex.sprint(-2, val)
+end
+
 local function render_num(input)
   if type(input) == "number" then
     if input < 0 then
@@ -68,60 +72,53 @@ end
 --      false => function aufgerufen mit Talentzeile, Waffenzeile und eBE,
 --      true  => function aufgerufen mit iteriertem Wert aus der Waffenzeile
 local function kampfwerte(items, render, typ_index, num_values, num_rows)
+  local rowsep = [[\\\hline]]
+  local colsep = "&"
   typ_index = typ_index or 1
   for i,v in ipairs(items) do
     if i ~= 1 then
-      tex.sprint([[\\\hline]])
+      tex.sprint(rowsep)
     end
     local input_index = 1
-    local talent = nil
+    local talent = false
     local ebe = 0
-    if typ_index > 0 then
-      local given_name = v[typ_index]
+    local given_name = typ_index > 0 and v[typ_index] or nil
+    if given_name ~= nil then
       for i,t in ipairs(data.Talente.Kampf) do
-        if #t >= 1 then
-          if given_name == t.Name then
-            talent = t
-            if #talent >= 3 then
-              ebe = calc_be(talent.BE)
-            end
-            break
+        if given_name == t.Name then
+          talent = t
+          if #talent >= 3 then
+            ebe = calc_be(talent.BE)
           end
+          break
         end
       end
-    else
-      talent = false
     end
 
     for j = 1,num_values do
       if j ~= 1 then
-        tex.sprint([[&]])
+        tex.sprint(colsep)
       end
       local spec = render[j]
-      local single_value, render = true, nil
+      local single_value, render = true, render_text
       if spec ~= nil then
         single_value, render = unpack(spec)
       end
       if single_value then
-        local val = v[input_index]
-        if render == nil then
-          tex.sprint(-2, val)
-        else
-          render(val, v)
-        end
+        render(v[input_index], v)
         input_index = input_index + 1
       elseif talent ~= false or typ_index <= 0 then
         render(v, talent, ebe)
       end
     end
   end
-  for i=#items+1,num_rows do
-    if i ~= 1 then
-      tex.sprint([[\\\hline]])
+
+  if #items < num_rows then
+    if #items > 0 then
+      tex.sprint(rowsep)
     end
-    for j=2,num_values do
-      tex.sprint("&")
-    end
+    tex.sprint(
+      string.rep(string.rep(colsep, num_values - 1), num_rows - #items, rowsep))
   end
 end
 
