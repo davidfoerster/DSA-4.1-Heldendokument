@@ -1,6 +1,7 @@
 local data = require("data")
 local common = require("common")
 local schema = require("schema")
+local pathlib = require("pathlib")
 require("stdext")
 
 local frontseite = {}
@@ -41,18 +42,7 @@ end
 
 function held_basis.links(self)
   for i,n in ipairs({"Geschlecht", "Tsatag", "Groesse", "Gewicht",
-                     "Haarfarbe", "Augenfarbe"}) do
-    if i ~= 1 then
-      tex.sprint([[\\ \hline]])
-    end
-    local_heading(self.labels[n])
-    tex.sprint("&")
-    tex.sprint(-2, data.Held[n])
-  end
-end
-
-function held_basis.rechts(self)
-  for i,n in ipairs({"Stand", "Sozialstatus"}) do
+                     "Haarfarbe", "Augenfarbe", "Stand", "Sozialstatus"}) do
     if i ~= 1 then
       tex.sprint([[\\ \hline]])
     end
@@ -62,8 +52,30 @@ function held_basis.rechts(self)
   end
   tex.sprint([[\\ \hline]])
   common.multiline_content({
-    name="Titel", rows=4, cols=2, col=[[p{.9\textwidth}]], baselinestretch=1.35,
+    name="Titel", rows=2, cols=2, col=[[p{.9\textwidth}]], baselinestretch=1.35,
     preamble=self.labels["Titel"], hspace="54.92pt"}, data.Held.Titel)
+end
+
+function held_basis.portrait(self, width, height)
+  local portrait = data.Held.Portrait
+  if portrait and portrait.filename ~= "" then
+    local opts = {
+      width = width or [[\unitlength]],
+      height = height or [[1.435\unitlength]],
+    }
+    for _, k in ipairs(portrait.order) do opts[k] = portrait[k] end
+    opts.filename = nil
+    tex.sprint("\\includegraphics[")
+    for k, v in pairs(opts) do
+      if v ~= nil and v ~= "" then
+        tex.sprint(",", k, "={", tostring(v), "}")
+      end
+    end
+    tex.sprint("]{{")
+    tex.sprint(-2,
+      pathlib.join(pathlib.dirname(data.filename), portrait.filename))
+    tex.sprint("}}")
+  end
 end
 
 frontseite.held = held_basis

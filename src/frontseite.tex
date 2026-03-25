@@ -1,7 +1,7 @@
 \directlua{format = require("format")}
 
 \begin{dsaCharacterSheet}
-
+%
 \bgroup\renewcommand{\arraystretch}{1.325}
 \vspace*{-3pt}
 \begin{dsaSheetBox}
@@ -14,28 +14,24 @@
     \end{tabular}
 \end{dsaSheetBox}
 
-\vspace{-8pt}
-\begin{multicols}{2}
-\begin{dsaSheetBox}[.5\textwidth-.5\columnsep]
-    \begin{tabular}{p{2.3cm}p{\dimexpr\textwidth-4\tabcolsep-2.3cm}}
+\begin{dsaSheetBox}[.375\textwidth-\fboxsep]
+    \begin{tabular}{p{2.5cm}p{\dimexpr\textwidth-4\tabcolsep-2.5cm}}
         \directlua{frontseite.held:links()}
     \end{tabular}
 \end{dsaSheetBox}%
-
-\columnbreak%
-\begin{dsaSheetBox}[.5\textwidth-.5\columnsep]
-
-    \begin{tabular}{p{2.5cm}p{\dimexpr\textwidth-4\tabcolsep-2.5cm}}
-        \directlua{frontseite.held:rechts()}
-    \end{tabular}
-\end{dsaSheetBox}%
-\end{multicols}
-\vspace{-12pt}
-
-\begin{dsaSheetBox}[\textwidth]
+%
+\begin{dsaSheetBox*}{.25\textwidth}{0pt}
+    \setlength{\unitlength}{\textwidth}
+    \begin{picture}(1, 1.435)
+        \put(0,1.3){\makebox[\unitlength]{\textmansontt{Wappen/Porträt}}}%
+        \put(0,0){\directlua{frontseite.held:portrait()}}%
+    \end{picture}
+\end{dsaSheetBox*}%
+%
+\begin{dsaSheetBox}[.375\textwidth-\fboxsep]
     \begin{tabular}{p{\dimexpr\textwidth-2\tabcolsep}}
         \directlua{common.multiline_content({
-            name="Aussehen", rows=common.current_page.Aussehen,
+            name="Aussehen", rows=10,
             baselinestretch=1.35, preamble="Aussehen",
             hspace="10pt"}, data.Held.Aussehen)
         }
