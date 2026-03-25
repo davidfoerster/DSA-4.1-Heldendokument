@@ -71,7 +71,7 @@ frontseite.held = held_basis
 frontseite.schEig = function()
   local ret = {}
   for _, e in ipairs(data.Nachteile.Eigenschaften.value) do
-    table.insert(ret, schema.String(e.Name .. " " .. e.Wert))
+    table.insert(ret, schema.String(string.format("%s %s", e.Name, e.Wert)))
   end
   return {value = ret, inner = schema.String}
 end

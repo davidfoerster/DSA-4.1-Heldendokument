@@ -4,6 +4,7 @@ local common = require("common")
 local schemadef = require("schemadef")
 local schema = require("schema")
 local silhouette = require("silhouette")
+local format = require("format")
 
 local kampfbogen = {}
 
@@ -218,16 +219,9 @@ local fernkampf_render = {
     if talent == nil or fk_basis == "" then
       return
     end
-    local fk = fk_basis - ebe
-    if talent.TaW ~= nil then
-      fk = fk + talent.TaW
-    end
-    local a = art(v)
-    for _, s in ipairs(talent.Spezialisierungen) do
-      if s == a then
-        fk = fk + 2
-        break
-      end
+    local fk = fk_basis - ebe + (v.WM or 0) + (talent.TaW or 0)
+    if table.find(talent.Spezialisierungen, art(v)) ~= nil then
+      fk = fk + 2
     end
     if talent.Name == "Belagerungswaffen" and data.SF.Fernkampf.Geschuetzmeister then
       fk = fk + 2
@@ -347,7 +341,9 @@ function kampfbogen.ruestungsteile()
     local rs, be = data:gesamtRuestung({teil}, true)
     table.insert(items, {teil.Name, rs, be})
   end
-  common.inner_rows(items, 3, common.current_page.Ruestung)
+  local function formatter(v) tex.sprint(-2, format.decimal(v, "%.1f")) end
+  common.inner_rows(
+    items, 3, common.current_page.Ruestung, {nil, formatter, formatter})
 end
 
 function kampfbogen.ruestung(name)

@@ -300,30 +300,43 @@ setmetatable(value_line.labels, {
   end
 })
 
-function value_line.render(self, items, hspace, v_len)
+function value_line.render(self, items, hspace, v_len, value_fmts)
   if v_len == nil then
     v_len = "1cm"
   end
-  tex.sprint([[\bgroup\setlength{\tabcolsep}{0pt}\begin{tabular}{]])
-  for i=1,#items do
-    tex.sprint("lx{" .. v_len .. "}")
+  if type(value_fmts) ~= "table" then
+    value_fmts = {value_fmts}
   end
-  tex.sprint("}")
+
+  tex.sprint(
+    [[\bgroup\setlength{\tabcolsep}{0pt}\begin{tabular}{]],
+    string.format("lx{%s}", v_len):rep(#items),
+    "}")
   for i, p in ipairs(items) do
     if i ~= 1 then
-      tex.sprint([[&\hspace{]] .. hspace .. "}")
+      tex.sprint([[&\hspace{]], hspace, "}")
     end
     tex.sprint([[\textmansontt{\bfseries ]])
     local info = self.labels(p)
-    local label = type(info) == "table" and info[1] or info
+    local label, value
+    if type(info) == "table" then
+      label, value = table.unpack(info)
+    else
+      label, value = info, data:cur(p)
+    end
+
+    local fmt = value_fmts[math.min(i, #value_fmts)]
+    if fmt == nil then
+      value = tostring(value)
+    elseif type(fmt) == "string" then
+      value = string.format(fmt, value)
+    else
+      value = fmt(value)
+    end
 
     tex.sprint(-2, label)
     tex.sprint(":} &")
-    if type(info) == "table" then
-      tex.sprint(-2, info[2])
-    else
-      tex.sprint(-2, data:cur(p))
-    end
+    tex.sprint(-2, value)
   end
   tex.print([[\end{tabular}\egroup]])
 end

@@ -53,11 +53,13 @@
 }
 
 \newcommand{\Vermoegen}{
+\ifnum\directlua{tex.sprint(-2, common.current_page.Vermoegen.Muenzen + common.current_page.Vermoegen.Sonstiges)}>0
 \begin{dsaSheetBox}[.5\textwidth-.5\columnsep]
     \renewcommand{\arraystretch}{1}
     \setlength{\tabcolsep}{1pt}
     \normalfont\fontsize{8}{12}\selectfont
 
+    \ifnum\directlua{tex.sprint(-2, common.current_page.Vermoegen.Muenzen)}>0{%
     \begin{NiceTabular}{p{2.6cm}|x{0.7cm}|x{0.7cm}|x{0.7cm}|x{0.7cm}|x{0.7cm}|x{0.7cm}|x{0.7cm}|x{0.7cm}}
     \CodeBefore
         \rowcolors{2}{white}{gray!30}
@@ -66,7 +68,10 @@
         \directlua{
             common.inner_rows(data.Vermoegen, 9, common.current_page.Vermoegen.Muenzen)
         } \\ \hline%
-    \end{NiceTabular}
+    \end{NiceTabular}%
+    }\fi
+
+    \ifnum\directlua{tex.sprint(-2, common.current_page.Vermoegen.Sonstiges)}>0{%
     \begin{tabular}{p{\textwidth-1.33\tabcolsep}}
         \directlua{
             common.multiline_content({
@@ -75,8 +80,10 @@
                 baselinestretch=1.033, fontsize={8,12}
             }, data.Vermoegen.Sonstiges)
         }
-    \end{tabular}
+    \end{tabular}%
+    }\fi
 \end{dsaSheetBox}
+\fi
 }
 
 \newcommand{\ProvVermoeg}{
@@ -105,6 +112,7 @@
 }
 
 \newcommand{\Verbindungen}{
+\ifnum\directlua{tex.sprint(-2, common.current_page.Verbindungen)}>0
     \begin{dsaSheetBox}[.5\textwidth-.5\columnsep]
         \begin{tabular}{p{\textwidth-1.33\tabcolsep}}
             \directlua{
@@ -116,9 +124,11 @@
             }
         \end{tabular}
     \end{dsaSheetBox}
+\fi
 }
 
 \newcommand{\Notizen}{
+\ifnum\directlua{tex.sprint(-2, common.current_page.Notizen)}>0
     \begin{dsaSheetBox}
         \begin{tabular}{p{\textwidth-1.33\tabcolsep}}
             \directlua{
@@ -130,6 +140,7 @@
             }
         \end{tabular}
     \end{dsaSheetBox}
+\fi
 }
 
 \newcommand{\VerbindNotiz}{
@@ -151,6 +162,7 @@
 }
 
 \newcommand{\Tiere}{%
+\ifnum\directlua{tex.sprint(-2, common.current_page.Tiere)}>0
 \vspace*{-15pt}
 \begin{center}
     \LARGE\bfseries\textmansontt{\shadowtext{Tiere}}%
@@ -158,18 +170,20 @@
 \vspace{-10pt}
 
 \begin{dsaSheetBox}
-    \begin{NiceTabular}{p{3.067cm}|x{3.4cm}|x{0.8cm}|x{0.8cm}|x{0.8cm}|x{1.2cm}|x{0.8cm}|x{0.8cm}|x{0.8cm}|x{0.8cm}|x{0.8cm}|x{0.8cm}|x{0.8cm}|x{0.8cm}|x{0.8cm}}
+    \begin{NiceTabular}{p{34mm}|x{34mm}|x{7mm}|x{7mm}|x{7mm}|x{12mm}|x{7mm}|x{7mm}|x{7mm}|x{7mm}|x{7mm}|x{7mm}|x{7mm}|x{7mm}|x{8mm}|x{8mm}}
     \CodeBefore
         \rowcolors{2}{gray!30}{white}
     \Body
         \scriptsize\textbf{Name} & \scriptsize\textbf{Art} & \scriptsize\textbf{INI} & \scriptsize\textbf{AT} & \scriptsize\textbf{PA} & \scriptsize\textbf{TP} & \scriptsize\textbf{LE} & \scriptsize\textbf{RS} &
-        \scriptsize\textbf{KO} & \scriptsize\textbf{GS} & \scriptsize\textbf{AU} & \scriptsize\textbf{MR} &
-        \scriptsize\textbf{LO} & \scriptsize\textbf{TK} & \scriptsize\textbf{ZK} \\ \hline
+        \scriptsize\textbf{KO} & \scriptsize\textbf{KK} & \scriptsize\textbf{GS} & \scriptsize\textbf{AU} &
+        \scriptsize\textbf{MR} & \scriptsize\textbf{LO} & \scriptsize\textbf{TK} & \scriptsize\textbf{ZK}
+        \\ \hline
         \directlua{
-            common.inner_rows(data.Tiere, 15, common.current_page.Tiere, {[6] = function(v) common.schaden.render(common.schaden.parse(v)) end})
+            common.inner_rows(data.Tiere, 16, common.current_page.Tiere, {[6] = function(v) common.schaden.render(common.schaden.parse(v)) end})
         }
     \end{NiceTabular}
 \end{dsaSheetBox}
+\fi
 }
 
 \newcommand{\Liturgien}{%

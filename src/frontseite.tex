@@ -1,3 +1,5 @@
+\directlua{format = require("format")}
+
 \begin{dsaCharacterSheet}
 
 \bgroup\renewcommand{\arraystretch}{1.325}
@@ -108,7 +110,10 @@
 
 \begin{dsaSheetBox}[\textwidth]
     \large
-    \directlua{common.value_line:render({"AP_Gesamt", "AP_Eingesetzt", "AP_Guthaben"}, "40pt", "2.5cm")}
+    \directlua{
+        common.value_line:render(
+            {"AP_Gesamt", "AP_Eingesetzt", "AP_Guthaben"}, "40pt", "2.5cm",
+            format.group_thousands)}
 \end{dsaSheetBox}%
 \begin{tikzpicture}[remember picture, overlay]
     \node[inner sep=0pt] at ([xshift=0cm,yshift=-1.35cm]current page.north) {%
