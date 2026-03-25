@@ -86,12 +86,11 @@ function common.inner_rows(v, num_items, num_rows, output_funcs)
     num_rows = #v
   end
   if num_rows > 0 then
+    local empty_line = string.rep("&", math.max(num_items - 1, 0))
     local my_row = num_items > 1 and common.fixed_length_row(num_items, false) or common.row
-    for i=1,num_rows do
+    for i = 1, num_rows do
       if i > #v then
-        for j=2,num_items do
-          tex.sprint("&")
-        end
+        tex.sprint(empty_line)
       else
         my_row(output_funcs, v[i])
       end
@@ -106,12 +105,8 @@ function common.segnungen(items)
   local first = true
   for _, s in ipairs(items) do
     if getmetatable(s).name == "Segnung" then
-      if first then
-        first = false
-      else
-        tex.sprint(-2, ", ")
-      end
-      tex.sprint(-2, s.Name)
+      tex.sprint(-2, first and "" or ", ", s.Name)
+      first = false
       if s.Seite ~= "" then
         tex.sprint([[ {\tiny ]])
         tex.sprint(-2, tostring(s.Seite))
@@ -162,33 +157,28 @@ end
 --   preamble="", hspace="10pt", fontsize={8,12}
 -- }
 function common.multiline_content(spec, ...)
+  local n_blocks = 0
   if spec.cols ~= nil and spec.cols > 1 then
-    tex.sprint([[\multicolumn{]])
-    tex.sprint(spec.cols)
-    tex.sprint("}{")
-    tex.sprint(spec.col)
-    tex.sprint("}{")
+    tex.sprint(string.format([[\multicolumn{%d}{%s}{]], spec.cols, spec.col))
+    n_blocks = n_blocks + 1
   end
   if spec.rows > 1 then
-    tex.sprint([[\multirow[t]{]])
-    tex.sprint(spec.rows)
-    tex.sprint([[}{=}{\renewcommand{\baselinestretch}{]])
-    tex.sprint(spec.baselinestretch)
-    tex.sprint([[}\normalfont]])
+    tex.sprint(string.format(
+      [[\multirow[t]{%d}{=}{\renewcommand{\baselinestretch}{%f}]],
+      spec.rows, spec.baselinestretch))
+    n_blocks = n_blocks + 1
+  end
+  if spec.rows > 1 or spec.fontsize ~= nil then
+    tex.sprint([[\normalfont]])
   end
   if spec.fontsize ~= nil then
-    tex.sprint([[\normalfont\fontsize{]])
-    tex.sprint(spec.fontsize[1])
-    tex.sprint([[}{]])
-    tex.sprint(spec.fontsize[2])
-    tex.sprint([[}\selectfont]])
+    tex.sprint(string.format(
+      [[\fontsize{%d}{%d}\selectfont]],
+      spec.fontsize[1], spec.fontsize[2]))
   end
   if spec.preamble ~= nil and spec.preamble ~= "" then
-    tex.sprint([[\textmansontt{\textbf{]])
-    tex.sprint(spec.preamble)
-    tex.sprint([[}}\hspace{]])
-    tex.sprint(spec.hspace)
-    tex.sprint("}")
+    tex.sprint(string.format(
+      [[\textmansontt{\textbf{%s}}\hspace{%s}]], spec.preamble, spec.hspace))
   end
 
   local first = true
@@ -200,26 +190,22 @@ function common.multiline_content(spec, ...)
         local is_table = type(v) == "table"
         if is_table and getmetatable(v) == nil then
           if #v ~= 0 then
-            tex.error("nested table in '" .. spec.name .. "' is not empty!")
+            tex.error(string.format(
+              "nested table in '%s' is not empty!", spec.name))
           end
           if seen_empty or first then
             tex.sprint([[\newline]])
           else
             seen_empty = true
           end
-        elseif (not is_table) or (not v.skip) then
+        elseif not (is_table and v.skip) then
           if not first then
-            if seen_empty then
-              tex.sprint([[\newline]])
-            else
-              tex.sprint(", ")
-            end
+            tex.sprint(seen_empty and [[\newline]] or ", ")
           end
           first = (v == "")
           seen_empty = false
           if (not is_table) and getmetatable(container) ~= values.inner then
-            tex.sprint(-2, container.label or container.name)
-            tex.sprint(" ")
+            tex.sprint(-2, container.label or container.name, " ")
           end
           tex.sprint(-2, tostring(v))
         end
@@ -232,12 +218,9 @@ function common.multiline_content(spec, ...)
       tex.sprint(-2, values)
     end
   end
-  if spec.rows > 1 then tex.sprint("}") end
-  if spec.cols ~= nil and spec.cols > 1 then tex.sprint("}") end
-  for i=2,spec.rows do
-    tex.sprint([[\\\hline ]])
-    tex.sprint(empty_line)
-  end
+  tex.sprint(
+    string.rep("}", n_blocks),
+    string.rep([[\\\hline]] .. "\n", spec.rows - 1))
   tex.sprint([[\\]])
 end
 
@@ -357,8 +340,9 @@ local pages_source = {
 function common.pages()
   for i,p in ipairs(data.Layout.value) do
     local pKind = getmetatable(p).name
-    tex.print([[\directlua{common.current_page = data.Layout[]] .. tostring(i) .. "]}")
-    tex.print("\\input{" .. pages_source[pKind] .. "}")
+    tex.print(
+      string.format([[\directlua{common.current_page = data.Layout[%s]}]], i),
+      string.format([[\input{%s}]], pages_source[pKind]))
   end
 end
 

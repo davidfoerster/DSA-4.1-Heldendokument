@@ -110,14 +110,7 @@ function getter_map:formula(name)
   if vals.hide_formula then
     return ""
   end
-  local res = "("
-  for i,v in ipairs(vals) do
-    if i ~= 1 then
-      res = res .. "+"
-    end
-    res = res .. v
-  end
-  return res .. ")/" .. vals.div
+  return string.format("(%s)/%d", table.concat(vals, "+"), vals.div)
 end
 
 getter_map:reg("basic", "MU", "KL", "IN", "CH", "FF", "GE", "KO", "KK")
@@ -652,10 +645,10 @@ function values:talentsteigerung(e)
         if e.AT ~= nil then
           t.AT = t.AT + e.AT
         end
-        event[2] = -1 * ap
+        event[2] = -ap
         event[3] = faktor
         local kosten = faktor:apply(ap)
-        event[4] = -1 * kosten
+        event[4] = -kosten
         event[5] = values:ap_mod(kosten)
         return event
       end

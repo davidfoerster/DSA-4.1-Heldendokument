@@ -56,6 +56,10 @@ local function atpa_mod(basis, talent, schwelle, schritt, wm, art, spez)
   return type(wm) == "number" and val + wm or val
 end
 
+local function render_text(val)
+  tex.sprint(-2, val)
+end
+
 local function render_num(input)
   if type(input) == "number" then
     if input < 0 then
@@ -71,60 +75,53 @@ end
 --      false => function aufgerufen mit Talentzeile, Waffenzeile und eBE,
 --      true  => function aufgerufen mit iteriertem Wert aus der Waffenzeile
 local function kampfwerte(items, render, typ_index, num_values, num_rows)
+  local rowsep = [[\\\hline]]
+  local colsep = "&"
   typ_index = typ_index or 1
   for i,v in ipairs(items) do
     if i ~= 1 then
-      tex.sprint([[\\\hline]])
+      tex.sprint(rowsep)
     end
     local input_index = 1
-    local talent = nil
+    local talent = false
     local ebe = 0
-    if typ_index > 0 then
-      local given_name = v[typ_index]
+    local given_name = typ_index > 0 and v[typ_index] or nil
+    if given_name ~= nil then
       for i,t in ipairs(data.Talente.Kampf) do
-        if #t >= 1 then
-          if given_name == t.Name then
-            talent = t
-            if #talent >= 3 then
-              ebe = calc_be(talent.BE)
-            end
-            break
+        if given_name == t.Name then
+          talent = t
+          if #talent >= 3 then
+            ebe = calc_be(talent.BE)
           end
+          break
         end
       end
-    else
-      talent = false
     end
 
     for j = 1,num_values do
       if j ~= 1 then
-        tex.sprint([[&]])
+        tex.sprint(colsep)
       end
       local spec = render[j]
-      local single_value, render = true, nil
+      local single_value, render = true, render_text
       if spec ~= nil then
         single_value, render = unpack(spec)
       end
       if single_value then
-        local val = v[input_index]
-        if render == nil then
-          tex.sprint(-2, val)
-        else
-          render(val, v)
-        end
+        render(v[input_index], v)
         input_index = input_index + 1
       elseif talent ~= false or typ_index <= 0 then
         render(v, talent, ebe)
       end
     end
   end
-  for i=#items+1,num_rows do
-    if i ~= 1 then
-      tex.sprint([[\\\hline]])
+
+  if #items < num_rows then
+    if #items > 0 then
+      tex.sprint(rowsep)
     end
-    for j=2,num_values do
-      tex.sprint("&")
-    end
+    tex.sprint(
+      string.rep(string.rep(colsep, num_values - 1), num_rows - #items, rowsep))
   end
 end
 
@@ -141,12 +138,7 @@ local nahkampf_render = {
 }
 
 nahkampf_render[2]= {true, function(v)
-  local s = nahkampf_render.short[v]
-  if s ~= nil then
-    tex.sprint(-2, s)
-  else
-    tex.sprint(-2, v)
-  end
+  tex.sprint(-2, nahkampf_render.short[v] or v)
 end}
 nahkampf_render[3]= {false, function(v, talent, ebe)
   if talent ~= nil then
@@ -199,11 +191,7 @@ local fernkampf_render = {
     end
   end},
   [2]= {true, function(v)
-    if v == "Belagerungswaffen" then
-      tex.sprint("Belager")
-    else
-      tex.sprint(-2, v)
-    end
+    tex.sprint(-2, v == "Belagerungswaffen" and "Belager" or v)
   end},
   [3]= {false, function(v, talent, ebe)
     if talent ~= nil and #talent >= 3 then
@@ -246,11 +234,11 @@ local waffenlos_render = {
     end
     local added = 0
     for _, t in ipairs(data.SF.Waffenlos:getlist("Kampfstil")) do
-      if v.Name == t.VerbessertesTalent and added < 2 then
-        atb = atb + 1
+      if v.Name == t.VerbessertesTalent then
         added = added + 1
       end
     end
+    atb = atb + math.min(added, 2)
     tex.sprint(-2, atpa_mod(atb - ebe // 2, talent.AT, v["TP/KK Schwelle"], v["TP/KK Schritt"], 0))
   end},
   [6]= {false, function(v, talent, ebe)
@@ -260,11 +248,11 @@ local waffenlos_render = {
     end
     local added = 0
     for _, t in ipairs(data.SF.Waffenlos:getlist("Kampfstil")) do
-      if v.Name == t.VerbessertesTalent and added < 2 then
-        pab = pab + 1
+      if v.Name == t.VerbessertesTalent then
         added = added + 1
       end
     end
+    pab = pab + math.min(added, 2)
     tex.sprint(-2, atpa_mod(pab - (ebe + 1) // 2, data.PA(talent), v["TP/KK Schwelle"], v["TP/KK Schritt"], 0))
   end},
   [7]= {false, function(v, talent, ebe)

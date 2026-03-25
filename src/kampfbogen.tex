@@ -171,7 +171,9 @@
                     kampfbogen.ruestungsteile()
                 } \\ \Xhline{2\arrayrulewidth}
                 \normalfont\bfseries\scriptsize Summe &
-                \directlua{tex.sprint(data:cur("RS"))} & \directlua{tex.sprint(data:cur("BE_voll"))} \\ \Xhline{2\arrayrulewidth}
+                \directlua{tex.sprint(-2, data:cur("RS"))} &
+                \directlua{tex.sprint(-2, data:cur("BE_voll"))} \\
+                \Xhline{2\arrayrulewidth}
                 \multicolumn{2}{l|}{
                     \normalfont\scriptsize\bfseries Rüstungsgewöhnung
                     \directlua{
