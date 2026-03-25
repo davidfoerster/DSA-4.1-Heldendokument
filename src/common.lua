@@ -471,24 +471,25 @@ function common.schaden.render(tp)
   if has_die then
     tex.sprint(-2, tp.dice)
     if tp.die == 6 or tp.die == 20 then
-      tex.sprint(string.format([[\hspace{1pt}\faDiceD%d\hspace{1pt}]], tp.die))
+      tex.sprint(string.format(
+        [[\,\raisebox{-.1ex}{\faIcon{dice-d%d}}\,]], tp.die))
     else
       tex.sprint(-2, "W", tp.die)
     end
   end
   if tp.num and not (has_die and tp.num == 0) then
-    local sign
+    local sign = ""
     if tp.num < 0 then
-      sign = "−"
+      sign = "$-$"
     elseif has_die then
-      sign = "+"
-    else
-      sign = ""
+      sign = "$+$"
     end
-    tex.sprint(-2, sign, math.abs(math.round(tp.num)))
+    tex.sprint(
+      sign, sign ~= "" and [[\hspace{.08em}]] or "",
+      math.abs(math.round(tp.num)))
   end
   if tp.tpa then
-    tex.sprint([[\,\AusdauerschadenSymbol]])
+    tex.sprint([[\,\raisebox{-.1ex}{\AusdauerschadenSymbol}]])
   end
 end
 
