@@ -488,7 +488,7 @@ function common.schaden.render(tp)
     tex.sprint(-2, sign, math.abs(math.round(tp.num)))
   end
   if tp.tpa then
-    tex.sprint(-2, "(A)")
+    tex.sprint([[\,\AusdauerschadenSymbol]])
   end
 end
 
